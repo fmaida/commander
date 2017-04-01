@@ -43,6 +43,17 @@ class Commander(urwid.Frame):
         self.eloop = None
         self._eloop_thread = None
 
+    def set_title(self, new_title):
+        """
+        Set the new title of the commander window
+        
+        :param new_title: 
+        :return: 
+        """
+
+        self.header = urwid.AttrMap(urwid.Text(new_title), "reversed")
+
+
     def _change_footer(self, message=None):
 
         if not message:
@@ -58,12 +69,9 @@ class Commander(urwid.Frame):
 
     def on_line_entered(self, line):
 
-        # If the status bar needs to be updated, it does so
-        if self.buffered_status != self._cmd.status:
-            urwid.Frame.footer = self._change_footer()
-
         # Let's look at the command just entered
         if self._cmd:
+            # If the commander has a "command" instance
 
             try:
                 res = self._cmd(line)
@@ -72,11 +80,18 @@ class Commander(urwid.Frame):
                 return
 
             if res == Commander.Exit:
+                # If the user wants to exit
                 raise urwid.ExitMainLoop()
             elif res:
                 self.output(str(res))
 
+                # If the status bar needs to be updated, it does so
+                if self.buffered_status != self._cmd.status:
+                    urwid.Frame.footer = self._change_footer()
+
         else:
+            # If Commander doesn't have an instance of "Command"
+
             if line in ("q", "quit", "exit", "bye"):
                 raise urwid.ExitMainLoop()
             else:

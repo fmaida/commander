@@ -12,7 +12,7 @@ class Command:
     status = "Command:  (Tab to switch focus to upper frame, where you can scroll text)"
 
     def __init__(self, status=None,
-                 quit_commands=["q", "quit", "exit", "bye"],
+                 quit_commands=["quit", "exit", "bye"],
                  help_commands=["help", "?", "h"]):
 
         self._quit_cmd = quit_commands
