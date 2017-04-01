@@ -41,7 +41,7 @@ class Gigetto(Command):
         self.count = 1
         Command.__init__(self)
 
-    def status_line(self):
+    def update_status(self):
         self.count += 1
         self.status = "Count total: {}".format(self.count)
         
@@ -64,6 +64,6 @@ class Gigetto(Command):
 
 if __name__ == '__main__':
 
-    c = Commander('This is a test client', cmd_cb=Gigetto())
+    c = Commander('This is a test client', cmd_cb=Gigetto(callback))
     c.loop()
     sys.exit(0)

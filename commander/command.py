@@ -11,15 +11,18 @@ class Command:
 
     status = "Command:  (Tab to switch focus to upper frame, where you can scroll text)"
 
-    def __init__(self, status=None, quit_commands=["q", "quit", "exit", "bye"],
+    def __init__(self, status=None,
+                 quit_commands=["q", "quit", "exit", "bye"],
                  help_commands=["help", "?", "h"]):
 
-        if status:
-            self.status = status
         self._quit_cmd = quit_commands
         self._help_cmd = help_commands
+        if status:
+            self.status = status
+        # Refresh the status line
+        self.update_status()
 
-    def status_line(self):
+    def update_status(self):
         pass
 
     def __call__(self, line):
@@ -35,7 +38,7 @@ class Command:
         args = tokens[1:]  # Takes the remaining arguments as parameters
 
         # Refresh the status line
-        self.status_line()
+        self.update_status()
 
         if cmd in self._quit_cmd:  # When the user needs to exit
             return Commander.Exit

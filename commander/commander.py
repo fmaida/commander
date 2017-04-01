@@ -32,12 +32,10 @@ class Commander(urwid.Frame):
         self.body = ListView(self.model, lambda: self._update_focus(False), max_size=max_size)
         self.input = Input(lambda: self._update_focus(True))
         self._cmd = cmd_cb
-        foot = urwid.Pile([urwid.AttrMap(urwid.Text(self._cmd.status), "reversed"),
-                           urwid.AttrMap(self.input, "normal")])
         urwid.Frame.__init__(self,
                              urwid.AttrWrap(self.body, "normal"),
                              urwid.AttrWrap(self.header, "reversed"),
-                             foot)
+                             self._change_footer())
         self.set_focus_path(["footer", 1])
         self._focus = True
         urwid.connect_signal(self.input, "line_entered", self.on_line_entered)
@@ -45,13 +43,13 @@ class Commander(urwid.Frame):
         self.eloop = None
         self._eloop_thread = None
 
-    def change_footer(self, message=None):
+    def _change_footer(self, message=None):
 
         if not message:
             message = self._cmd.status
-        foot = urwid.Pile([urwid.AttrMap(urwid.Text(message), "reversed"),
+        self.buffered_status = message
+        return urwid.Pile([urwid.AttrMap(urwid.Text(message), "reversed"),
                            urwid.AttrMap(self.input, "normal")])
-        urwid.Frame.footer = foot
 
     def loop(self, handle_mouse=False):
         self.eloop = urwid.MainLoop(self, self.PALETTE, handle_mouse=handle_mouse)
@@ -62,19 +60,22 @@ class Commander(urwid.Frame):
 
         # If the status bar needs to be updated, it does so
         if self.buffered_status != self._cmd.status:
-            self.change_footer()
+            urwid.Frame.footer = self._change_footer()
 
         # Let's look at the command just entered
         if self._cmd:
+
             try:
                 res = self._cmd(line)
             except Exception as e:
                 self.output('Error: %s' % e, 'error')
                 return
+
             if res == Commander.Exit:
                 raise urwid.ExitMainLoop()
             elif res:
                 self.output(str(res))
+
         else:
             if line in ("q", "quit", "exit", "bye"):
                 raise urwid.ExitMainLoop()
