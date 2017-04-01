@@ -38,7 +38,12 @@ def indent(elem, level=0):
 class Gigetto(Command):
 
     def __init__(self):
+        self.count = 1
         Command.__init__(self)
+
+    def status_line(self):
+        self.count += 1
+        self.status = "Count total: {}".format(self.count)
         
     def do_msg(self, *args):
         """

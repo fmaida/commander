@@ -13,7 +13,7 @@ class Commander(urwid.Frame):
     You can also asynchronously output messages with Commander.output('message')
     """
 
-    buffered_status_bar = ""
+    buffered_status = ""
 
     class Exit:
         pass
@@ -32,7 +32,7 @@ class Commander(urwid.Frame):
         self.body = ListView(self.model, lambda: self._update_focus(False), max_size=max_size)
         self.input = Input(lambda: self._update_focus(True))
         self._cmd = cmd_cb
-        foot = urwid.Pile([urwid.AttrMap(urwid.Text(self._cmd.status_bar), "reversed"),
+        foot = urwid.Pile([urwid.AttrMap(urwid.Text(self._cmd.status), "reversed"),
                            urwid.AttrMap(self.input, "normal")])
         urwid.Frame.__init__(self,
                              urwid.AttrWrap(self.body, "normal"),
@@ -48,7 +48,7 @@ class Commander(urwid.Frame):
     def change_footer(self, message=None):
 
         if not message:
-            message = self._cmd.status_bar
+            message = self._cmd.status
         foot = urwid.Pile([urwid.AttrMap(urwid.Text(message), "reversed"),
                            urwid.AttrMap(self.input, "normal")])
         urwid.Frame.footer = foot
@@ -61,7 +61,7 @@ class Commander(urwid.Frame):
     def on_line_entered(self, line):
 
         # If the status bar needs to be updated, it does so
-        if self.buffered_status_bar != self._cmd.status_bar:
+        if self.buffered_status != self._cmd.status:
             self.change_footer()
 
         # Let's look at the command just entered

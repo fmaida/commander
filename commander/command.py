@@ -9,15 +9,18 @@ class Command:
     just extend with do_something  method to handle your commands
     """
 
-    status_bar = "Command:  (Tab to switch focus to upper frame, where you can scroll text)"
+    status = "Command:  (Tab to switch focus to upper frame, where you can scroll text)"
 
-    def __init__(self, status_bar=None, quit_commands=["q", "quit", "exit", "bye"],
+    def __init__(self, status=None, quit_commands=["q", "quit", "exit", "bye"],
                  help_commands=["help", "?", "h"]):
 
-        if status_bar:
-            self.status_bar = status_bar
+        if status:
+            self.status = status
         self._quit_cmd = quit_commands
         self._help_cmd = help_commands
+
+    def status_line(self):
+        pass
 
     def __call__(self, line):
         """
@@ -30,6 +33,9 @@ class Command:
         tokens = line.split()  # Split the line based on spaces
         cmd = tokens[0].lower()  # Takes the first argument as command
         args = tokens[1:]  # Takes the remaining arguments as parameters
+
+        # Refresh the status line
+        self.status_line()
 
         if cmd in self._quit_cmd:  # When the user needs to exit
             return Commander.Exit
