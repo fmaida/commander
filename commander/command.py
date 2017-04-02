@@ -9,21 +9,19 @@ class Command:
     just extend with do_something  method to handle your commands
     """
 
-    status = "Command:  (Tab to switch focus to upper frame, where you can scroll text)"
-
-    def __init__(self, status=None,
-                 quit_commands=["quit", "exit", "bye"],
+    def __init__(self, quit_commands=["quit", "exit", "bye"],
                  help_commands=["help", "?", "h"]):
 
         self._quit_cmd = quit_commands
         self._help_cmd = help_commands
-        if status:
-            self.status = status
         # Refresh the status line
         self.update_status()
 
     def update_status(self):
-        pass
+        return "Command:  (Tab to switch focus to upper frame, where you can scroll text)"
+
+    def error(self, e):
+        return "Error: {}".format(e)
 
     def __call__(self, line):
         """

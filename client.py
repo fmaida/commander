@@ -35,7 +35,7 @@ def indent(elem, level=0):
             elem.tail = i
 
 
-class Gigetto(Command):
+class MyTest(Command):
 
     def __init__(self):
         self.count = 1
@@ -43,7 +43,7 @@ class Gigetto(Command):
 
     def update_status(self):
         self.count += 1
-        self.status = "Count total: {}".format(self.count)
+        return "Count total: {}".format(self.count)
         
     def do_msg(self, *args):
         """
@@ -54,9 +54,8 @@ class Gigetto(Command):
         :return: 
         """
 
-        # if len(args)<2:
-        #     raise ValueError('Atleat two parameters are expected - recipient and message')
-        # xc.send_message(mto=args[0], mbody=' '.join(args[1:]), mtype='chat')
+        if len(args) < 1:
+            raise ValueError('You need to provide a message')
         return "Hello {}".format(args[0])
 
     def do_change(self, message):
@@ -64,6 +63,6 @@ class Gigetto(Command):
 
 if __name__ == '__main__':
 
-    c = Commander('This is a test client', cmd_cb=Gigetto(callback))
+    c = Commander('This is a test client', cmd_cb=MyTest())
     c.loop()
     sys.exit(0)

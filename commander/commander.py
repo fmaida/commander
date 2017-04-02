@@ -2,6 +2,7 @@ import threading
 import urwid
 from commander import ListView
 from commander import Input
+from commander.exceptions import UnknownCommand
 
 
 class Commander(urwid.Frame):
@@ -53,11 +54,11 @@ class Commander(urwid.Frame):
 
         self.header = urwid.AttrMap(urwid.Text(new_title), "reversed")
 
-
     def _change_footer(self, message=None):
 
-        if not message:
-            message = self._cmd.status
+        # If the status bar needs to be updated, it does so
+        if message is None:
+            message = self._cmd.update_status()
         self.buffered_status = message
         return urwid.Pile([urwid.AttrMap(urwid.Text(message), "reversed"),
                            urwid.AttrMap(self.input, "normal")])
@@ -75,8 +76,11 @@ class Commander(urwid.Frame):
 
             try:
                 res = self._cmd(line)
+            except UnknownCommand as e:
+                self.output(self._cmd.error(e), "error")
+                return
             except Exception as e:
-                self.output('Error: %s' % e, 'error')
+                self.output('Error: %s' % e, "error")
                 return
 
             if res == Commander.Exit:
@@ -85,9 +89,9 @@ class Commander(urwid.Frame):
             elif res:
                 self.output(str(res))
 
-                # If the status bar needs to be updated, it does so
-                if self.buffered_status != self._cmd.status:
-                    urwid.Frame.footer = self._change_footer()
+                msg = self._cmd.update_status()
+                if self.buffered_status != msg:
+                    urwid.Frame.footer = self._change_footer(msg)
 
         else:
             # If Commander doesn't have an instance of "Command"
