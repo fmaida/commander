@@ -41,6 +41,10 @@ class MyTest(Command):
         self.count = 1
         Command.__init__(self)
 
+    def error(self, e):
+        self.update_status()
+        return "There was an error: {}".format(e)
+
     def update_status(self):
         self.count += 1
         return "Count total: {}".format(self.count)
